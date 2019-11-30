@@ -104,7 +104,7 @@ def allocate(n):
         print("mapping table :", paging_table)
         print("physical :",physical_mem) 
         print ("logical :",logical_mem)
-        return([spot,n])   
+        return([spot, n])   
     
 
 
@@ -117,17 +117,30 @@ Freeing function
     #-1 on error
 def free(elem):
     spot = elem[0]
-    size = elem[1]
+    n = elem[1]
     
-    for i in range(spot, spot+size):
-        print("tcha")
-    #update mapping_table
-    #update logical_memory
-    #update physical_memory
-        
-    
+    for i in range(spot, spot+n):
+        #update logical_memory
+        logical_mem[i] = 0
+        #update physical_memory
+        physical_mem[ paging_table[i//nb_words][1]*nb_words + (i%nb_words)] = 0                
+        #update mapping_table
+    for j in range (spot//nb_words, (spot+n)//nb_words +1):
+        for k in range(nb_words):
+            can_be_freed = True
+            if logical_mem[j*nb_words+k] == 1:
+                can_be_freed = False
+                break
+        if can_be_freed:
+            print("Removing element ", j, " from paging table")
+            paging_table[j] = [False, False]
+        else:
+            print("Won't free this page because there are some other things on it : ", j)
+    print("mapping table :", paging_table)
+    print("physical :",physical_mem) 
+    print ("logical :",logical_mem)
 
 
-tab = allocate (5)
-free(tab)
+tab = allocate(5)
+#free(tab)
 print(tab)
